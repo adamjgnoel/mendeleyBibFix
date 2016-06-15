@@ -40,11 +40,14 @@
  * Distributed under the New BSD license. See LICENSE.txt for license details.
  *
  * Created June 15, 2016
- * Current version v1.0 (2016-06-15)
+ * Current version v1.0.1 (2016-06-15)
  *
  * Revision history:
  *
- * Revision v1.0
+ * Revision v1.0.1 (2016-06-15)
+ * - corrected end of bib entry detection to not catch annotations as false alarms
+ *
+ * Revision v1.0 (2016-06-15)
  * - File created
  *
  *
@@ -190,7 +193,9 @@ int main(int argc, char *argv[])
 		while(true)
 		{
 			if((inputContent[curInputInd] == '}'
-				&& inputContent[curInputInd-1] == '\n')
+				&& inputContent[curInputInd-1] == '\n'
+				&& (inputContent[curInputInd+1] == '\n'
+				|| inputContent[curInputInd+1] == '\0'))
 				|| inputContent[curInputInd] == '\0')
 				break; // Reached end of current entry (or EOF)
 			else
