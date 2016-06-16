@@ -40,9 +40,12 @@
  * Distributed under the New BSD license. See LICENSE.txt for license details.
  *
  * Created June 15, 2016
- * Current version v1.0.1 (2016-06-15)
+ * Current version v1.0.2 (2016-06-15)
  *
  * Revision history:
+ *
+ * Revision v1.0.2 (2016-06-15)
+ * - removed unused variables
  *
  * Revision v1.0.1 (2016-06-15)
  * - corrected end of bib entry detection to not catch annotations as false alarms
@@ -109,13 +112,9 @@ int main(int argc, char *argv[])
 	char * outputContent;
 	
 	unsigned long curInputInd, curInputAnchorInd;
-	char curInputChar;
-	unsigned long curEntryInd;
-	char curEntryChar;
 	
 	unsigned long numEntry = 0;
 	char * curBibEntry;
-	char * curBibFixed;
 	unsigned long curBibInd, curBibLength, indEOL;
 	
 	
@@ -328,7 +327,6 @@ int main(int argc, char *argv[])
 	free(inputName);
 	free(outputName);
 	free(curBibEntry);
-	free(curBibFixed);
 	
 	return 0;
 }
