@@ -34,15 +34,22 @@
  *
  * Both arguments are optional. If there is only one argument, then it is assumed to be
  * the output filename. The default input filename is "library.bib", and the default
- * output filename is "library_fixed.bib"
+ * output filename is "library_fixed.bib". If you're fine with the defaults, then
+ * you can also just double-click on the executable without needing a terminal open.
  *
  * Copyright 2016 Adam Noel. All rights reserved.
  * Distributed under the New BSD license. See LICENSE.txt for license details.
  *
  * Created June 15, 2016
- * Current version v1.0.2 (2016-06-15)
+ * Current version v1.0.3 (2016-06-19)
  *
  * Revision history:
+ *
+ * Revision v1.0.3 (2016-06-19)
+ * - corrected detection of bib entry after a URL that gets removed
+ * - added workaround to enable a custom date, "to appear", "in press", or any other custom
+ * 		data at end of entry. If an entry has an ISSN but no year, then the ISSN is renamed
+ *		to the year.
  *
  * Revision v1.0.2 (2016-06-15)
  * - removed unused variables
@@ -91,7 +98,7 @@ int main(int argc, char *argv[])
 	const char *URL_EXCEPTION_TYPES[NUM_URL_EXCEPTIONS];
 	URL_EXCEPTION_TYPES[0] = "misc";
 	URL_EXCEPTION_TYPES[1] = "unpublished";
-	// END OF USER-MODIFIED BLOCK
+	// END OF USER-MODIFIED URL EXCEPTION BLOCK
 	
 	int curException;
 	bool bUrlException;
@@ -113,10 +120,16 @@ int main(int argc, char *argv[])
 	
 	unsigned long curInputInd, curInputAnchorInd;
 	
+	// Bib-entry variables
 	unsigned long numEntry = 0;
 	char * curBibEntry;
 	unsigned long curBibInd, curBibLength, indEOL;
 	
+	// Year-tracking variables
+	bool bHasYear;				// Current entry defined the year
+	bool bHasISSN;				// Current entry defined the year
+	unsigned long issnInd; 		// Index of the issn in the current entry.
+								// This entry is renamed to the year if year is not defined
 	
 	// Timer variables
 	clock_t startTime, endTime;
@@ -243,6 +256,8 @@ int main(int argc, char *argv[])
 			}
 		}
 		
+		bHasYear = false;
+		bHasISSN = false;
 		// Scan Remainder of entry
 		while(curBibEntry[curBibInd] != '\0')
 		{
@@ -282,6 +297,14 @@ int main(int argc, char *argv[])
 					memmove(&curBibEntry[curBibInd+1], &curBibEntry[indEOL+1],
 						curBibLength - indEOL + 1);
 					curBibLength -= indEOL - curBibInd;
+					curBibInd--; // Correct index so that line after URL is read correctly
+				} else if(!strncmp(&curBibEntry[curBibInd+1], "year =",6))
+				{ 	// This entry defines the year
+					bHasYear = true;
+				} else if(!strncmp(&curBibEntry[curBibInd+1], "issn =",6))
+				{	// Record line where issn starts in case we need to rename it to the year
+					bHasISSN = true;
+					issnInd = curBibInd + 1;
 				}
 			} else if(!strncmp(&curBibEntry[curBibInd], "{\\{}",4))
 			{ 	// We have an incorrectly formatted opening curly brace
@@ -299,6 +322,14 @@ int main(int argc, char *argv[])
 			}
 			
 			curBibInd++;
+		}
+		
+		if(!bHasYear && bHasISSN)
+		{ // This entry does not define the year. Rename the issn to the year
+			curBibEntry[issnInd] = 'y';
+			curBibEntry[issnInd+1] = 'e';
+			curBibEntry[issnInd+2] = 'a';
+			curBibEntry[issnInd+3] = 'r';
 		}
 		
 		// Write fixed entry to output string
