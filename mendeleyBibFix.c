@@ -41,9 +41,12 @@
  * Distributed under the New BSD license. See LICENSE.txt for license details.
  *
  * Created June 15, 2016
- * Current version v1.0.3 (2016-06-19)
+ * Current version v1.1 (2016-10-26)
  *
  * Revision history:
+ *
+ * Revision v1.1 (2016-10-26)
+ * - added removal of "annote" field, which includes personal annotations
  *
  * Revision v1.0.3 (2016-06-19)
  * - corrected detection of bib entry after a URL that gets removed
@@ -75,6 +78,7 @@
 char * stringAllocate(long stringLength);
 char * stringWrite(char * src);
 unsigned long findEndOfLine(char * str, unsigned long startInd);
+unsigned long findEndOfField(char * str, unsigned long startInd);
 
 //
 // MAIN
@@ -290,7 +294,14 @@ int main(int argc, char *argv[])
 					memmove(&curBibEntry[indEOL-3], &curBibEntry[indEOL-1],
 						curBibLength - indEOL + 2);
 					curBibLength -= 2;
-				} else if(!bUrlException
+				} else if(!strncmp(&curBibEntry[curBibInd+1], "annote =",8))
+				{	// Entry has an annotation. Erase the whole field
+					indEOL = findEndOfField(curBibEntry, curBibInd+1);
+					memmove(&curBibEntry[curBibInd+1], &curBibEntry[indEOL+1],
+						curBibLength - indEOL + 1);
+					curBibLength -= indEOL - curBibInd;
+					curBibInd--; // Correct index so that line after URL is read correctly
+				}else if(!bUrlException
 					&& !strncmp(&curBibEntry[curBibInd+1], "url =",5))
 				{	// Entry has a URL but it should be removed. Erase the whole line
 					indEOL = findEndOfLine(curBibEntry, curBibInd+1);
@@ -392,4 +403,14 @@ unsigned long findEndOfLine(char * str, unsigned long startInd)
 		curInd++;
 	
 	return curInd;
+}
+
+// Find end of field in current string
+unsigned long findEndOfField(char * str, unsigned long startInd)
+{
+	unsigned long curInd = startInd;
+	while(strncmp(&str[curInd+1], "},",2))
+		curInd++;
+	
+	return curInd+3;
 }
