@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 		curBibEntry = malloc((curBibLength + 1)*sizeof(char));
 		if(curBibEntry == NULL)
 		{
-			fprintf(stderr,"ERROR: Memory could not be allocated to copy bib entry %u.\n", numEntry);
+			fprintf(stderr,"ERROR: Memory could not be allocated to copy bib entry %lu.\n", numEntry);
 			exit(EXIT_FAILURE);
 		}
 		for(curBibInd = 0; curBibInd < curBibLength; curBibInd++)
@@ -376,7 +376,7 @@ int main(int argc, char *argv[])
 	
 	fprintf(outputFile, "%s", outputContent);
 	fclose(outputFile);
-	printf("Successfully wrote and closed output file with %u entries.\n", numEntry);
+	printf("Successfully wrote and closed output file with %lu entries.\n", numEntry);
 	
 	// Cleanup
 	free(inputContent);
