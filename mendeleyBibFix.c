@@ -26,12 +26,14 @@
  * So this code runs very fast (bib files with hundreds of entries are fixed in a
  * small fraction of a second) but may not be "future-proof"
  *
- * You will need to compile this code to run it. A compiled version for windows is
+ * You will need to compile this code to run it. A compiled version for Windows is
  * included on the release page of Github. If you are going to compile it yourself with gcc,
  * then you will need the -std=c99 option
  *
- * Call syntax (windows):
+ * Call syntax (Windows):
  * 		mendeleyBibFix.exe [OUTPUT_FILENAME] [INPUT_FILENAME]
+ * Call syntax (Linux or macOS):
+ * 		./mendeleyBibFix [OUTPUT_FILENAME] [INPUT_FILENAME]
  *
  * Both arguments are optional. If there is only one argument, then it is assumed to be
  * the output filename. The default input filename is "library.bib", and the default
