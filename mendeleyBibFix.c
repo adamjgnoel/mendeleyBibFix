@@ -26,12 +26,14 @@
  * So this code runs very fast (bib files with hundreds of entries are fixed in a
  * small fraction of a second) but may not be "future-proof"
  *
- * You will need to compile this code to run it. A compiled version for windows is
+ * You will need to compile this code to run it. A compiled version for Windows is
  * included on the release page of Github. If you are going to compile it yourself with gcc,
  * then you will need the -std=c99 option
  *
- * Call syntax (windows):
+ * Call syntax (Windows):
  * 		mendeleyBibFix.exe [OUTPUT_FILENAME] [INPUT_FILENAME]
+ * Call syntax (Linux or macOS):
+ * 		./mendeleyBibFix [OUTPUT_FILENAME] [INPUT_FILENAME]
  *
  * Both arguments are optional. If there is only one argument, then it is assumed to be
  * the output filename. The default input filename is "library.bib", and the default
@@ -235,7 +237,7 @@ int main(int argc, char *argv[])
 		curBibEntry = malloc((curBibLength + 1)*sizeof(char));
 		if(curBibEntry == NULL)
 		{
-			fprintf(stderr,"ERROR: Memory could not be allocated to copy bib entry %u.\n", numEntry);
+			fprintf(stderr,"ERROR: Memory could not be allocated to copy bib entry %lu.\n", numEntry);
 			exit(EXIT_FAILURE);
 		}
 		for(curBibInd = 0; curBibInd < curBibLength; curBibInd++)
@@ -376,7 +378,7 @@ int main(int argc, char *argv[])
 	
 	fprintf(outputFile, "%s", outputContent);
 	fclose(outputFile);
-	printf("Successfully wrote and closed output file with %u entries.\n", numEntry);
+	printf("Successfully wrote and closed output file with %lu entries.\n", numEntry);
 	
 	// Cleanup
 	free(inputContent);
